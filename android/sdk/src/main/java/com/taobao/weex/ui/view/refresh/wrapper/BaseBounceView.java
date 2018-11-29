@@ -87,17 +87,17 @@ public abstract class BaseBounceView<T extends View> extends FrameLayout {
     }
 
     /**
-     * Init wipelayout
+     * Init swipe layout
      */
-    private WXSwipeLayout createBounceView(Context context) {
+    private void createBounceView(Context context) {
         swipeLayout = new WXSwipeLayout(context);
         swipeLayout.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+        //创建内部滚动的view
         mInnerView = setInnerView(context);
-        if (mInnerView == null)
-            return null;
+        if (mInnerView == null) return;
         swipeLayout.addTargetView(mInnerView);
+        //将swipeLayout添加到一个 frameLayout中
         addView(swipeLayout, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-        return swipeLayout;
     }
 
     /**
