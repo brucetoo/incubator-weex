@@ -110,9 +110,15 @@ public class WXSDKManager {
     this(new WXRenderManager());
   }
 
+    /**
+     * WXSDKManager初始化的时候 会顺带初始化 WXRenderManager
+     * 所有的native交互都是由{@link #mBridgeManager}代理实现
+     * @param renderManager 渲染管理器
+     */
   private WXSDKManager(WXRenderManager renderManager) {
     mWXRenderManager = renderManager;
     mBridgeManager = WXBridgeManager.getInstance();
+    //单线程池处理任务
     mWXWorkThreadManager = new WXWorkThreadManager();
     mWXAnalyzerList = new ArrayList<>();
     mAllInstanceMap = new HashMap<>();

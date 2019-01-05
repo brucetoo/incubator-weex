@@ -27,7 +27,6 @@ import android.graphics.Typeface;
 import android.os.Environment;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.taobao.weex.common.WXConfig;
 import com.taobao.weex.utils.FontDO;
@@ -38,12 +37,8 @@ import com.taobao.weex.utils.WXLogUtils;
 import com.taobao.weex.utils.WXSoInstallMgrSdk;
 import com.taobao.weex.utils.WXUtils;
 
-import org.w3c.dom.Text;
-
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -402,10 +397,12 @@ public class WXEnvironment {
   }
 
   public static boolean extractSo() {
+      //apk路径 data/app/pckName****.apk
     File sourceFile = new File(getApplication().getApplicationContext().getApplicationInfo().sourceDir);
     final String cacheDir = getCacheDir();
     if (sourceFile.exists() && !TextUtils.isEmpty(cacheDir)) {
       try {
+          //从apk中提取so，放入到 data/data/pckName/cache 文件夹下
         WXFileUtils.extractSo(sourceFile.getAbsolutePath(), cacheDir);
       } catch (IOException e) {
         WXLogUtils.e("extractSo error " + e.getMessage());

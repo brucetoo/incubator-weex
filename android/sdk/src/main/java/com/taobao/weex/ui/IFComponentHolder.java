@@ -27,6 +27,11 @@ import com.taobao.weex.bridge.JavascriptInvokable;
 public interface IFComponentHolder extends ComponentCreator,JavascriptInvokable {
 
     /** Prepare component if not a lazy load componnet.**/
+    /**
+     * 是否需要提前将{@link com.taobao.weex.ui.component.WXComponentProp}
+     * 和 {@link com.taobao.weex.annotation.JSMethod}注解的方法解析出来~
+     * false表示立即解析(非懒加载)
+     */
     void loadIfNonLazy();
 
     Invoker getPropertyInvoker(String name);

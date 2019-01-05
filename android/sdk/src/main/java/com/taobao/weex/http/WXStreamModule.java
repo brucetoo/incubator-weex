@@ -104,7 +104,7 @@ public class WXStreamModule extends WXModule {
 
   /**
    *
-   * @param optionsStr request options include:
+   * @param optionsObj request options include:
    *  method: GET 、POST、PUT、DELETE、HEAD、PATCH
    *  headers：object，request header
    *  url:
@@ -131,7 +131,7 @@ public class WXStreamModule extends WXModule {
 
   public void fetch(JSONObject optionsObj , final JSCallback callback, JSCallback progressCallback, String instanceId, String bundleURL){
     boolean invaildOption = optionsObj==null || optionsObj.getString("url")==null;
-    if(invaildOption){
+    if(invaildOption){//检查参数合法性
       if(callback != null) {
         Map<String, Object> resp = new HashMap<>();
         resp.put("ok", false);
@@ -149,7 +149,7 @@ public class WXStreamModule extends WXModule {
 
     WXSDKInstance wxsdkInstance = WXSDKManager.getInstance().getSDKInstance(instanceId);
     if (wxsdkInstance != null) {
-      if (wxsdkInstance.getStreamNetworkHandler() != null) {
+      if (wxsdkInstance.getStreamNetworkHandler() != null) {//请求url的本地处理
         String localUrl = wxsdkInstance.getStreamNetworkHandler().fetchLocal(url);
         if (!TextUtils.isEmpty(localUrl)) {
           url = localUrl;
@@ -157,14 +157,14 @@ public class WXStreamModule extends WXModule {
       }
     }
 
-    if (method != null) method = method.toUpperCase();
+    if (method != null) method = method.toUpperCase();//so，js中大小写都可以
     Options.Builder builder = new Options.Builder()
         .setMethod(!"GET".equals(method)
             &&!"POST".equals(method)
             &&!"PUT".equals(method)
             &&!"DELETE".equals(method)
             &&!"HEAD".equals(method)
-            &&!"PATCH".equals(method)?"GET":method)
+            &&!"PATCH".equals(method)?"GET":method)//乱配置的，默认是GET
         .setUrl(url)
         .setBody(body)
         .setType(type)

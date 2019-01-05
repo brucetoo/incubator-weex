@@ -100,7 +100,6 @@ public abstract class WXVContainer<T extends ViewGroup> extends WXComponent<T> {
   public ViewGroup getView() {
     return getHostView();
   }
-
   @Override
   public void applyLayoutAndEvent(WXComponent component) {
     if (!isLazy()) {

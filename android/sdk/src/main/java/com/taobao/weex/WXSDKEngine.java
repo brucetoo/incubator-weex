@@ -49,7 +49,6 @@ import com.taobao.weex.common.WXErrorCode;
 import com.taobao.weex.common.WXException;
 import com.taobao.weex.common.WXInstanceWrap;
 import com.taobao.weex.common.WXModule;
-import com.taobao.weex.common.WXPerformance;
 import com.taobao.weex.http.WXStreamModule;
 import com.taobao.weex.ui.ExternalLoaderComponentHolder;
 import com.taobao.weex.ui.IExternalComponentGetter;
@@ -78,7 +77,6 @@ import com.taobao.weex.ui.component.WXSwitch;
 import com.taobao.weex.ui.component.WXText;
 import com.taobao.weex.ui.component.WXVideo;
 import com.taobao.weex.ui.component.WXWeb;
-import com.taobao.weex.ui.component.basic.WXBasicComponent;
 import com.taobao.weex.ui.component.list.HorizontalListComponent;
 import com.taobao.weex.ui.component.list.SimpleListComponent;
 import com.taobao.weex.ui.component.list.WXCell;
@@ -259,6 +257,7 @@ public class WXSDKEngine implements Serializable {
   }
 
   private static void register() {
+      //目的是在执行注册组件的过程中，收集所有的任务，等注册完后统一批处理，并且同时释放拦截的限制，参看 BatchExecutor 解释
     BatchOperationHelper batchHelper = new BatchOperationHelper(WXBridgeManager.getInstance());
     try {
       registerComponent(
@@ -415,12 +414,23 @@ public class WXSDKEngine implements Serializable {
   }
 
 
+    /**
+     * 注册组件
+     * @param holder 组件自身相关的封装,比如是否懒加载(@Component(lazyload = false)),
+     *               存储属性设置对应的{@link com.taobao.weex.bridge.Invoker},方便反射调用
+     * @param appendTree node节点渲染的方式,默认是node模式,表示自身渲染完成就会被呈现在页面上;
+     *                   如果tree模式,则需要等待此节点所有的子节点全部渲染完后才程序到页面,明显node模式性能会好于后者
+     *                   参见runtime/frameworks/legacy/vm/compile.js#compileNativeComponent
+     * @param names native组件对应的前端便签名字,可以多个
+     * @return 是否注册成功
+     * @throws WXException 注册异常
+     */
   public static boolean registerComponent(IFComponentHolder holder, boolean appendTree, String ... names) throws WXException {
     boolean result =  true;
     try {
-      for (String name : names) {
+      for (String name : names) {//允许不同标签对应一个组件
         Map<String, Object> componentInfo = new HashMap<>();
-        if (appendTree) {
+        if (appendTree) {//tree模式
           componentInfo.put("append", "tree");
         }
         result = result && WXComponentRegistry.registerComponent(name, holder, componentInfo);

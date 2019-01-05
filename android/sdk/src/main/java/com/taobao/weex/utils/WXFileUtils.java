@@ -223,6 +223,7 @@ public class WXFileUtils {
 
         zipFile.createNewFile();
 
+        //so 流写入到 cache 文件夹下，文件名字为 fileName
         FileOutputStream outputStream =new FileOutputStream(zipFile);
         while (inputStream.read(data) != -1) {
           outputStream.write(data);

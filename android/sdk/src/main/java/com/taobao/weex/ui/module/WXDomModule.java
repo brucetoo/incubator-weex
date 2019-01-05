@@ -40,6 +40,7 @@ import com.taobao.weex.utils.WXLogUtils;
  * </p>
  * <p>
  *   This module is work different with other regular module, method is invoked directly, without reflection.
+ *   但是最后执行的时候有些也任然会使用到反射，比如 {@link #INVOKE_METHOD}
  * </p>
  */
 public final class WXDomModule extends WXModule {

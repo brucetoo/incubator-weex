@@ -46,6 +46,8 @@ import java.util.Map;
 
 /**
  * Communication interface for Java code and JavaScript code.
+ * 此文件在生成jni header，需要在 Source/android/jniprebuild/jni_files 中配置
+ * 具体的native实现类参见 wx_bridge.cpp
  */
 
 public class WXBridge implements IWXBridge {

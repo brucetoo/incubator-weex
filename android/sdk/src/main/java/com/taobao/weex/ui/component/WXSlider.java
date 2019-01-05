@@ -107,20 +107,37 @@ public class WXSlider extends WXVContainer<FrameLayout> {
   protected FrameLayout initComponentHostView(@NonNull Context context) {
     FrameLayout view = new FrameLayout(context);
     // init view pager
+      boolean clipChild = true;
+      int marginLeft = 0;
+      int marginRight = 0;
+      int pageMargin = 0;// no clip effect if pageMargin more than marginLeft/Right
     if (getAttrs() != null) {
       Object obj = getAttrs().get(INFINITE);
       isInfinite = WXUtils.getBoolean(obj, true);
+      clipChild =  WXUtils.getBoolean(getAttrs().get(Constants.Name.CLIP_CHILDREN),true);
+      marginLeft = WXUtils.getInt(getAttrs().get(Constants.Name.MARGIN_LEFT));
+      marginRight = WXUtils.getInt(getAttrs().get(Constants.Name.MARGIN_RIGHT));
+      pageMargin = WXUtils.getInt(getAttrs().get(Constants.Name.PAGE_MARGIN));
+      if(pageMargin >= marginLeft || pageMargin >= marginRight){
+            WXLogUtils.w("pageMargin more than marginLeft or marginRight which has no effect" );
+        }
     }
     FrameLayout.LayoutParams pagerParams = new FrameLayout.LayoutParams(
         LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
     mViewPager = new WXCircleViewPager(context);
     mViewPager.setCircle(isInfinite);
+    pagerParams.leftMargin = marginLeft;
+    pagerParams.rightMargin = marginRight;
     mViewPager.setLayoutParams(pagerParams);
 
     // init adapter
     mAdapter = new WXCirclePageAdapter(isInfinite);
     mViewPager.setAdapter(mAdapter);
     // add to parent
+    view.setClipChildren(clipChild);
+    mViewPager.setClipChildren(clipChild);
+    mViewPager.setPageMargin(pageMargin);
+    mViewPager.setOffscreenPageLimit(2);
     view.addView(mViewPager);
     mViewPager.addOnPageChangeListener(mPageChangeListener);
 

@@ -19,7 +19,6 @@
 package com.taobao.weex.ui;
 
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.taobao.weex.WXSDKManager;
 import com.taobao.weex.bridge.WXBridgeManager;
@@ -30,7 +29,6 @@ import com.taobao.weex.utils.WXLogUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -38,6 +36,10 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class WXComponentRegistry {
 
+    /**
+     * key 标签名字
+     * value IFComponentHolder接口 实现类一般是{@link SimpleComponentHolder}
+     */
   private static Map<String, IFComponentHolder> sTypeComponentMap = new ConcurrentHashMap<>();
   private static ArrayList<Map<String, Object>> sComponentInfos=new ArrayList<>();
 
@@ -50,6 +52,7 @@ public class WXComponentRegistry {
     AutoScanConfigRegister.preLoad(holder);
 
     //execute task in js thread to make sure register order is same as the order invoke register method.
+      //所有注册方法执行完成后，才会按注册顺序执行下面逻辑
     WXBridgeManager.getInstance()
         .post(new Runnable() {
       @Override
@@ -60,8 +63,8 @@ public class WXComponentRegistry {
             registerInfo = new HashMap<>();
           }
 
-          registerInfo.put("type",type);
-          registerInfo.put("methods",holder.getMethods());
+          registerInfo.put("type",type);//js标签名字
+          registerInfo.put("methods",holder.getMethods());//JSMethod注册的方法数组
           registerNativeComponent(type, holder);
           registerJSComponent(registerInfo);
           sComponentInfos.add(registerInfo);
@@ -76,7 +79,7 @@ public class WXComponentRegistry {
 
   private static boolean registerNativeComponent(String type, IFComponentHolder holder) throws WXException {
     try {
-      holder.loadIfNonLazy();
+      holder.loadIfNonLazy();//懒加载状态决定解析方法与否
       sTypeComponentMap.put(type, holder);
     }catch (ArrayStoreException e){
       e.printStackTrace();

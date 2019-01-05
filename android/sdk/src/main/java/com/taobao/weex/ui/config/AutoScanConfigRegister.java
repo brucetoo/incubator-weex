@@ -36,6 +36,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Created by furture on 2018/2/7.
+ * 此类目的是动态再配置文件中注册Components或者Module
  */
 
 public class AutoScanConfigRegister {
@@ -105,6 +106,7 @@ public class AutoScanConfigRegister {
 
             String[] configFiles = new String[0];
             try {
+                //assets目录下的文件
                 configFiles = assetManager.list("");
             } catch (IOException e) {
                 WXLogUtils.e(TAG, e);
@@ -116,6 +118,7 @@ public class AutoScanConfigRegister {
                 if(TextUtils.isEmpty(configFile)){
                     continue;
                 }
+                //文件的结构是以 weex_config_开头的json文件
                 if(configFile.startsWith("weex_config_") && configFile.endsWith(".json")){
                     String name = configFile;
                     if(TextUtils.isEmpty(name)){
@@ -130,7 +133,7 @@ public class AutoScanConfigRegister {
                             WXLogUtils.d(TAG, configFile + " find config " + config);
                         }
                         JSONObject object = JSON.parseObject(config);
-                        if (object.containsKey("modules")) {
+                        if (object.containsKey("modules")) {//解析modules
                             JSONArray array = object.getJSONArray("modules");
                             for (int i = 0; i < array.size(); i++) {
                                 ConfigModuleFactory configModuleFactory = ConfigModuleFactory.fromConfig(array.getJSONObject(i));

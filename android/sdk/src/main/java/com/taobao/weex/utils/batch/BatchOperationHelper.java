@@ -18,15 +18,12 @@
  */
 package com.taobao.weex.utils.batch;
 
-import com.taobao.weex.utils.batch.BactchExecutor;
-import com.taobao.weex.utils.batch.Interceptor;
-
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by sospartan on 8/24/16.
+ * 一次性搜集全部任务
  */
 public class BatchOperationHelper implements Interceptor {
 
@@ -43,7 +40,7 @@ public class BatchOperationHelper implements Interceptor {
 
   @Override
   public boolean take(Runnable runnable) {
-    if(isCollecting){
+    if(isCollecting){//正在搜集，则执行，当所有的add操作都执行完后，也就是 flush(), 不在处理此任务
       sRegisterTasks.add(runnable);
       return true;
     }
@@ -54,16 +51,16 @@ public class BatchOperationHelper implements Interceptor {
    * Post all tasks to executor. Can only be called once.
    */
   public void flush(){
-    isCollecting = false;
+    isCollecting = false;//状态改成完成搜集的模式
     mExecutor.post(new Runnable() {
       @Override
       public void run() {
         Iterator<Runnable> iterator = sRegisterTasks.iterator();
         while(iterator.hasNext()){
           Runnable item = iterator.next();
-          item.run();
+          item.run();//执行添加的任务
 //          iterator.remove();
-          sRegisterTasks.remove(item);
+          sRegisterTasks.remove(item);//删除
         }
       }
     });

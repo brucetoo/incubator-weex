@@ -202,6 +202,7 @@ public class WXText extends WXComponent<WXTextView> implements FlatComponent<Tex
           return;
         }
 
+        WXLogUtils.d("WXText", "Text TypefaceObserver is arrived " + fontFamily);
         FontDO fontDO = TypefaceUtil.getFontDO(fontFamily);
         if (fontDO != null && fontDO.getTypeface() != null && getHostView() != null) {
           WXTextView hostView = getHostView();

@@ -29,11 +29,11 @@ import com.alibaba.weex.commons.adapter.PicassoBasedDrawableLoader;
 import com.alibaba.weex.extend.adapter.ApmGenerator;
 import com.alibaba.weex.extend.adapter.DefaultAccessibilityRoleAdapter;
 import com.alibaba.weex.extend.adapter.InterceptWXHttpAdapter;
-import com.alibaba.weex.extend.component.RichText;
 import com.alibaba.weex.extend.component.WXComponentSyncTest;
 import com.alibaba.weex.extend.component.WXMask;
 import com.alibaba.weex.extend.component.WXParallax;
 import com.alibaba.weex.extend.module.GeolocationModule;
+import com.alibaba.weex.extend.module.HtmlTextViewComponent;
 import com.alibaba.weex.extend.module.MyModule;
 import com.alibaba.weex.extend.module.RenderModule;
 import com.alibaba.weex.extend.module.SyncTestModule;
@@ -99,6 +99,7 @@ public class WXApplication extends Application {
       WXSDKEngine.registerModule("titleBar", WXTitleBar.class);
 
       WXSDKEngine.registerModule("wsonTest", WXWsonTestModule.class);
+        WXSDKEngine.registerComponent("htmlText", HtmlTextViewComponent.class);
 
 
       /**

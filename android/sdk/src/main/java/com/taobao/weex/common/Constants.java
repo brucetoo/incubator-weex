@@ -110,6 +110,7 @@ public class Constants {
     String LINE_HEIGHT = "lineHeight";
     String DISABLED = "disabled";
     String VALUE = "value";
+    String CLIP_CHILDREN = "clipChildren";
     String IMAGE_QUALITY = "imageQuality";
     String FILTER = "filter";
     String QUALITY = "quality";
@@ -120,6 +121,7 @@ public class Constants {
     String AUTO_RECYCLE = "autoBitmapRecycle";
     String SHOW_INDICATORS = "showIndicators";
     String AUTO_PLAY = "autoPlay";
+    String PAGE_MARGIN = "pageMargin";
     String CONTROLS = "controls";
     String SCROLL_DIRECTION = "scrollDirection";
     String SCOPE = "scope";

@@ -47,10 +47,26 @@ import java.util.Set;
 public class SimpleComponentHolder implements IFComponentHolder{
   public static final String TAG = "SimpleComponentHolder";
   private final Class<? extends WXComponent> mClz;
+    /**
+     * 被{@link WXComponentProp}注解的属性设置方法对应的map
+     * key 代表 js端中属性名字
+     * value 代表 此方法反射的封装接口 一般是{@link MethodInvoker}
+     */
   private Map<String, Invoker> mPropertyInvokers;
+    /**
+     * 被{@link JSMethod}注解的方法对应的map
+     * key 如果alias未设置,默认为方法名
+     * value 方法反射的封装接口 一般是{@link MethodInvoker}
+     */
   private Map<String, Invoker> mMethodInvokers;
+    /**
+     * 组件实例化的接口，创建组件本身
+     */
   private ComponentCreator mCreator;
 
+    /**
+     * 当未显示提供{@link ComponentCreator}时，通过此类反射创建某个组件的实例
+     */
   public static class ClazzComponentCreator implements ComponentCreator{
 
     private Constructor<? extends WXComponent> mConstructor;

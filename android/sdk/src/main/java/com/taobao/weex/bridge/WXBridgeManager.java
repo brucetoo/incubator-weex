@@ -212,6 +212,7 @@ public class WXBridgeManager implements Callback, BactchExecutor {
   private WXBridgeManager() {
     initWXBridge(WXEnvironment.sRemoteDebugMode);
     mJSThread = new WXThread("WeexJSBridgeThread", this);
+    //为 jsBridge 事务开启子线程
     mJSHandler = mJSThread.getHandler();
   }
 
@@ -317,6 +318,7 @@ public class WXBridgeManager implements Callback, BactchExecutor {
       WXEnvironment.sDebugServerConnectable = true;
     }
 
+    //开发者调试工具 开启
     if (WXEnvironment.sDebugServerConnectable && (WXEnvironment.isApkDebugable() || WXEnvironment.sForceEnableDevTool)) {
       if (WXEnvironment.getApplication() != null) {
         try {
@@ -370,6 +372,7 @@ public class WXBridgeManager implements Callback, BactchExecutor {
         //Ignore, It will throw Exception on Release environment
       }
     } else {
+        //wx 实现桥接native层
       mWXBridge = new WXBridge();
     }
   }
@@ -1816,6 +1819,7 @@ public class WXBridgeManager implements Callback, BactchExecutor {
   public static StringBuilder sInitFrameWorkMsg = new StringBuilder();
 
   private void initFramework(String framework) {
+      //so加载成功后 才会执行此逻辑
     if (WXSDKEngine.isSoInitialized() && !isJSFrameworkInit()) {
       sInitFrameWorkTimeOrigin = System.currentTimeMillis();
       if (TextUtils.isEmpty(framework)) {
@@ -1833,18 +1837,18 @@ public class WXBridgeManager implements Callback, BactchExecutor {
           if(TextUtils.isEmpty(framework)) {
             framework = WXFileUtils.loadAsset("main.js", WXEnvironment.getApplication());
           }
-        } else {
-          if(wxJsFileLoaderAdapter != null) {
+        } else {//默认走此逻辑，非沙箱context
+          if(wxJsFileLoaderAdapter != null) {//自定义jsFramework的adapter实现
             framework = wxJsFileLoaderAdapter.loadJsFrameworkForSandBox();
           }
 
-          if(TextUtils.isEmpty(framework)) {
+          if(TextUtils.isEmpty(framework)) {//如果都没有实现，采用默认的weex-main-jsfm.js
             framework = WXFileUtils.loadAsset("weex-main-jsfm.js", WXEnvironment.getApplication());
           }
         }
         sInitFrameWorkMsg.append("| weex JS framework from assets, isSandBoxContext: ").append(isSandBoxContext);
       }
-      if (TextUtils.isEmpty(framework)) {
+      if (TextUtils.isEmpty(framework)) {//这种情况就是framework完全配置失败
         setJSFrameworkInit(false);
         sInitFrameWorkMsg.append("| framework isEmpty ");
         WXExceptionUtils.commitCriticalExceptionRT(null, WXErrorCode.WX_ERR_JS_FRAMEWORK,
@@ -1873,7 +1877,7 @@ public class WXBridgeManager implements Callback, BactchExecutor {
         }
         sInitFrameWorkMsg.append(" | pieSupport:").append(pieSupport);
         WXLogUtils.d("[WXBridgeManager] initFrameworkEnv crashFile:" + crashFile + " pieSupport:" + pieSupport);
-        // extends initFramework
+        // extends initFramework 正在通过wxBridge调用native层的init framework操作
         if (mWXBridge.initFrameworkEnv(framework, assembleDefaultOptions(), crashFile, pieSupport) == INIT_FRAMEWORK_OK) {
           WXEnvironment.sJSLibInitTime = System.currentTimeMillis() - start;
           WXLogUtils.renderPerformanceLog("initFramework", WXEnvironment.sJSLibInitTime);
@@ -1887,6 +1891,7 @@ public class WXBridgeManager implements Callback, BactchExecutor {
 
           execRegisterFailTask();
           WXEnvironment.JsFrameworkInit = true;
+          //初始化引擎成功后，注册module
           registerDomModule();
           trackComponentAndModulesTime();
         } else {
@@ -2134,6 +2139,7 @@ public class WXBridgeManager implements Callback, BactchExecutor {
       WXLogUtils.e("Weex [data_render register err]", e);
     }
     try {
+        //将默认的module通过 native 注册到js framework中，最终会调用 init.js -> module.js#registerModules
         if(0 == mWXBridge.execJS("", null, METHOD_REGISTER_MODULES, args)) {
             errorMsg = "execJS error";
         }
